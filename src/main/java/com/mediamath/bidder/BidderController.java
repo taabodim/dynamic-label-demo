@@ -1,9 +1,7 @@
 package com.mediamath.bidder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mediamath.bidder.model.Label;
-import com.mediamath.bidder.model.LabelRepository;
-import com.mediamath.bidder.model.VideoPayload;
+import com.mediamath.bidder.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 public class BidderController {
@@ -41,8 +40,36 @@ public class BidderController {
         bidderService.process(payload);
     }
 
-    @GetMapping("/label/list")
+    @GetMapping("/api/label/list")
     public Iterable<Label> listLabels() {
+        return labelRepository.findAll();
+    }
+
+    @PostMapping("/api/label/update")
+    public Iterable<Label> updateLabel(@RequestBody UpdateLabelPayload payload) {
+        Optional<Label> labelInDbOpt = labelRepository.findById(payload.getId());
+        if (labelInDbOpt.isPresent()) {
+            Label labelInDb = labelInDbOpt.get();
+            labelInDb.setSource(payload.getSource());
+            labelInDb.setField(payload.getField());
+            labelInDb.setOperation(payload.getOperation());
+            labelInDb.setEnabled(payload.isEnabled());
+            labelInDb.setExperimental(payload.isExperimental());
+            labelRepository.save(labelInDb);
+        } else {
+            throw new IllegalArgumentException("label doesn't exist with id " + payload.getId());
+        }
+
+        return labelRepository.findAll();
+    }
+
+    @PostMapping("/api/label/add")
+    public Iterable<Label> addLabel(@RequestBody AddLabelPayload payload) {
+        return labelRepository.findAll();
+    }
+
+    @PostMapping("/api/label/enable")
+    public Iterable<Label> enableLabel(@RequestBody EnableLabelPayload payload) {
         return labelRepository.findAll();
     }
 }

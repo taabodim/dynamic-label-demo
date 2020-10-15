@@ -136,4 +136,8 @@ export default {
 .top-navbar {
   top: 0px;
 }
+.div.modal-dialog.modal-notice {
+
+}
+
 </style>

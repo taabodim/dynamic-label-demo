@@ -158,7 +158,7 @@ let tablesMenu = {
     },
     {
       path: 'paginated',
-      name: 'Paginated Tables',
+      name: 'Optimization Data Pipeline',
       components: { default: PaginatedTables }
     }
   ]

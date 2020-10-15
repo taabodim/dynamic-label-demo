@@ -1,3 +1,4 @@
 target
 .idea/
+ui/node_modules/
 dynamic-label-demo.iml

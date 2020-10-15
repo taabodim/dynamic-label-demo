@@ -4,17 +4,17 @@
       <ul class="nav">
         <li class="nav-item">
           <a
-            href="http://creative-tim.com"
+            href="http://mediamath.com"
             target="_blank"
             rel="noopener"
             class="nav-link"
           >
-            Creative Tim
+          Mediamath
           </a>
         </li>
         <li class="nav-item">
           <a
-            href="https://www.creative-tim.com/presentation"
+            href="https://www.mediamath.com/about-us/"
             target="_blank"
             rel="noopener"
             class="nav-link"
@@ -24,7 +24,7 @@
         </li>
         <li class="nav-item">
           <a
-            href="http://blog.creative-tim.com"
+            href="https://www.mediamath.com/blog/"
             target="_blank"
             rel="noopener"
             class="nav-link"
@@ -34,15 +34,14 @@
         </li>
       </ul>
       <div class="copyright">
-        &copy; {{ year }}, made with <i class="tim-icons icon-heart-2"></i> by
-        <a href="https://binarcode.com" rel="noopener" target="_blank">BinarCode</a> and
+        &copy; SharkWeek {{ year }}, made with <i class="tim-icons icon-heart-2"></i> by
         <a
-          href="https://www.creative-tim.com/?ref=pdf-vuejs"
+          href="https://github.com/taabodim/dynamic-label-demo"
           target="_blank"
           rel="noopener"
-          >Creative Tim</a
+          >Mahmoud Taabodi and Yang Yang</a
         >
-        for a better web.
+        for a better mediamath.
       </div>
     </div>
   </footer>

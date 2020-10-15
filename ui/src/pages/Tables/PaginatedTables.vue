@@ -1,21 +1,142 @@
 <template>
   <div class="content">
     <div class="col-md-8 ml-auto mr-auto">
-      <h2 class="text-center">Paginated Tables</h2>
+      <h2 class="text-center">Optimization Data Pipeline</h2>
       <p class="text-center">
-        With a selection of custom components & and Element UI components, you
+        Super Fast Data Sharing Among MM Serivces.
+      <!-- With a selection of custom components & and Element UI components, you
         can built beautiful data tables. For more info check
         <a
           href="http://element.eleme.io/#/en-US/component/table"
           target="_blank"
           >Element UI Table</a
         >
+       -->
       </p>
+    </div>
+    <!-- edit modal -->
+    <modal
+      :show.sync="modals.showEditModal"
+      footerClasses="justify-content-center"
+      type="notice"
+    >
+      <h5 slot="header" class="modal-title">
+        Label Details
+      </h5>
+      <div class="instruction">
+        <div class="row">
+          <div class="col-md-4">
+            <strong>Field Name</strong>
+              <input type="text" class="form-control" placeholder="Field Name" v-model="this.modals.currentRow.field">            
+          </div>
+          <div class="col-md-4">
+              <strong>Enabled</strong>
+            <div class="row enabled-row">
+              <span class="label-switch">false</span>
+            <base-switch v-model="modals.currentRow.enabled">
+            </base-switch>
+            <span class="label-switch label-right">true</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <strong>Operation</strong>
+              <input type="text" class="form-control" placeholder="Operation" v-model="this.modals.currentRow.operation">            
+          </div>
+          <div class="col-md-4">
+              <strong>Experimental</strong>
+            <div class="row enabled-row">
+              <span class="label-switch">false</span>
+            <base-switch v-model="modals.currentRow.experimental">
+            </base-switch>
+            <span class="label-switch label-right">true</span>
+            </div>
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <strong>Source</strong>
+              <input type="text" class="form-control" placeholder="Source" v-model="this.modals.currentRow.source">            
+          </div>
+        </div>
+      </div>
+      <div slot="footer" class="justify-content-center footer-top-margin">
+        <base-button
+          type="info"
+          round
+          @click.native="modals.showEditModal = false"
+          >Save!
+        </base-button>
+      </div>
+    </modal>
+    <!-- end of edit modal -->
+    <!-- end of add modal -->
+    <modal
+      :show.sync="modals.showAddModal"
+      footerClasses="justify-content-center"
+      type="notice"
+    >
+      <h5 slot="header" class="modal-title">
+        Label Details
+      </h5>
+      <div class="instruction">
+        <div class="row">
+          <div class="col-md-4">
+            <strong>Field Name</strong>
+              <input type="text" class="form-control" placeholder="Field Name" v-model="this.modals.currentRow.field">            
+          </div>
+          <div class="col-md-4">
+              <strong>Enabled</strong>
+            <div class="row enabled-row">
+              <span class="label-switch">false</span>
+            <base-switch v-model="modals.currentRow.enabled">
+            </base-switch>
+            <span class="label-switch label-right">true</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <strong>Operation</strong>
+              <input type="text" class="form-control" placeholder="Operation" v-model="this.modals.currentRow.operation">            
+          </div>
+          <div class="col-md-4">
+              <strong>Experimental</strong>
+            <div class="row enabled-row">
+              <span class="label-switch">false</span>
+            <base-switch v-model="modals.currentRow.experimental">
+            </base-switch>
+            <span class="label-switch label-right">true</span>
+            </div>
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <strong>Source</strong>
+              <input type="text" class="form-control" placeholder="Source" v-model="this.modals.currentRow.source">            
+          </div>
+        </div>
+      </div>
+      <div slot="footer" class="justify-content-center footer-top-margin">
+        <base-button
+          type="info"
+          round
+          @click.native="modals.showAddModal = false"
+          >Add!
+        </base-button>
+      </div>
+    </modal>
+    <!-- end of add modal -->
+    <div class="row mt-5">
+          
     </div>
     <div class="row mt-5">
       <div class="col-12">
         <card card-body-classes="table-full-width">
-          <h4 slot="header" class="card-title">Paginated Tables</h4>
+          <h4 slot="header" class="card-title">Lables</h4>
           <div>
             <div
               class="col-12 d-flex justify-content-center justify-content-sm-between flex-wrap"
@@ -34,7 +155,7 @@
                 >
                 </el-option>
               </el-select>
-
+            
               <base-input>
                 <el-input
                   type="search"
@@ -60,15 +181,6 @@
               <el-table-column :min-width="135" align="right" label="Actions">
                 <div slot-scope="props">
                   <base-button
-                    @click.native="handleLike(props.$index, props.row)"
-                    class="like btn-link"
-                    type="info"
-                    size="sm"
-                    icon
-                  >
-                    <i class="tim-icons icon-heart-2"></i>
-                  </base-button>
-                  <base-button
                     @click.native="handleEdit(props.$index, props.row)"
                     class="edit btn-link"
                     type="warning"
@@ -78,7 +190,7 @@
                     <i class="tim-icons icon-pencil"></i>
                   </base-button>
                   <base-button
-                    @click.native="handleDelete(props.$index, props.row)"
+                    @click.native="handleDisable(props.$index, props.row)"
                     class="remove btn-link"
                     type="danger"
                     size="sm"
@@ -108,19 +220,32 @@
             </base-pagination>
           </div>
         </card>
+      <div class="d-flex justify-content-end">
+          <base-button type="info" round class="float-right" title=""  
+          @click.native="modals.showAddModal = true"
+          >
+            Add New Label <i class="tim-icons icon-minimal-right"></i>
+          </base-button>
+        </div>
       </div>
-    </div></div
-></template>
+      
+    </div>
+    </div>
+    </template>
 <script>
 import { Table, TableColumn, Select, Option } from 'element-ui';
 import { BasePagination } from 'src/components';
-import users from './users';
+/*** import users from './users'; */
+import { MANGO_HTTP } from '../../http-common';
 import Fuse from 'fuse.js';
 import swal from 'sweetalert2';
-
+import { BaseSwitch, Modal } from 'src/components';
+ 
 export default {
   components: {
     BasePagination,
+    BaseSwitch,
+    Modal,
     [Select.name]: Select,
     [Option.name]: Option,
     [Table.name]: Table,
@@ -155,6 +280,19 @@ export default {
   },
   data() {
     return {
+      modals: {
+        classic: false,
+        showEditModal: false,
+        showAddModal: false,
+        mini: false,
+        currentRow : {
+          field : "",
+          operation : "",
+          source : "",
+          enabled: false,
+          experimental: false
+        }
+      },
       pagination: {
         perPage: 5,
         currentPage: 1,
@@ -162,72 +300,123 @@ export default {
         total: 0
       },
       searchQuery: '',
-      propsToSearch: ['name', 'email', 'age'],
+      propsToSearch: ['field', 'operation', 'source'],
       tableColumns: [
         {
-          prop: 'name',
-          label: 'Name',
+          prop: 'id',
+          label: 'Id',
           minWidth: 200
         },
         {
-          prop: 'email',
-          label: 'Email',
+          prop: 'field',
+          label: 'Field',
+          minWidth: 200
+        },
+        {
+          prop: 'operation',
+          label: 'operation',
           minWidth: 250
         },
         {
-          prop: 'age',
-          label: 'Age',
+          prop: 'source',
+          label: 'source',
           minWidth: 100
         },
         {
-          prop: 'salary',
-          label: 'Salary',
+          prop: 'enabled',
+          label: 'enabled',
+          minWidth: 120
+        },
+        {
+          prop: 'experimental',
+          label: 'experimental',
           minWidth: 120
         }
       ],
-      tableData: users,
+      tableData: [],
       searchedData: [],
       fuseSearch: null
     };
   },
   methods: {
+    editLabel() { 
+        MANGO_HTTP.get("label/update", 
+        {
+          name: self.name,
+          advertiserId: self.advertiser_id,
+          status: 'ACTIVE', //TODO add status to add audience page
+          data: audienceToCreate
+        }).then( response => {
+          console.log(response);
+          getLabelList();
+      });
+    },
+    getLabelList () {
+      let self = this;
+      MANGO_HTTP.get("label/list").then( response => {
+          if( response.data ) {
+            console.log(response.data);
+              let list = [];
+
+              response.data.forEach(function (el, i) {
+                  list.push({
+                      id: el.id,
+                      field: el.field,
+                      operation: el.operation,
+                      source: el.source,
+                      enabled: "true",
+                      experimental: "false"
+
+                  });
+              });
+              self.tableData = list;
+          }
+      });
+    },
     handleLike(index, row) {
+      this.modals.showAddModal = true
+      /**
       swal.fire({
-        title: `You liked ${row.name}`,
+        title: `You liked ${row.field}`,
         buttonsStyling: false,
         icon: 'success',
         customClass: {
           confirmButton: 'btn btn-success btn-fill'
         }
       });
+      */
     },
     handleEdit(index, row) {
+      this.modals.showEditModal = true
+      this.modals.currentRow = row
+      /**
       swal.fire({
-        title: `You want to edit ${row.name}`,
+        title: `You want to edit ${row.field}`,
         buttonsStyling: false,
         customClass: {
           confirmButton: 'btn btn-info btn-fill'
         }
       });
+      */
     },
-    handleDelete(index, row) {
+    handleDisable(index, row) {
       swal.fire({
-        title: 'Are you sure?',
-        text: `You won't be able to revert this!`,
+        title: `Disable ${row.field}?`,
+        text: `Are you sure?`,
         icon: 'warning',
         showCancelButton: true,
         customClass: {
           confirmButton: 'btn btn-success btn-fill',
           cancelButton: 'btn btn-danger btn-fill'
         },
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes, disable it!',
         buttonsStyling: false
       }).then(result => {
         if (result.value) {
           this.deleteRow(row);
           swal.fire({
-            title: 'Deleted!',
-            text: `You deleted ${row.name}`,
+            title: 'Disabled!',
+            text: `You disabled ${row.field}`,
             icon: 'success',
             confirmButtonClass: 'btn btn-success btn-fill',
             buttonsStyling: false
@@ -250,6 +439,11 @@ export default {
       keys: ['name', 'email'],
       threshold: 0.3
     });
+    document.title = 'Lables';
+    this.getLabelList();
+  },
+  created() {
+  
   },
   watch: {
     /**
@@ -269,10 +463,30 @@ export default {
 </script>
 <style>
 .pagination-select,
+.footer-top-margin {
+   margin-bottom: 12px;
+}
 .search-input {
   width: 200px;
 }
 .swal2-icon-content{
   font-size: inherit !important;
+}
+
+.label-switch { 
+  margin-left :10px;
+  margin-right :10px;
+}
+
+.enabled-row1111 { 
+  display: flex;
+   /** 
+   align-content: space-between | space-around | space-evenly; -->
+   */ 
+   align-content: space-between;
+}
+.modal-content {
+  width: 120%;
+  height: 120%;
 }
 </style>

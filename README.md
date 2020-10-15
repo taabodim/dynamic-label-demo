@@ -36,15 +36,28 @@
         `source` varchar(200) NOT NULL,
         `field` varchar(200) NOT NULL,
         `operation` varchar(200) NOT NULL,
+        `enabled` tinyint(1) DEFAULT 0,
+        `experimental` tinyint(1) DEFAULT 0,
         `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (`id`));
     
     use label;
     DELETE FROM label;
-    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`) values(1, 'OPEN_RTB', 'site.demo', 'CALL_DELPHI');
-    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`) values(2, 'OPEN_RTB', 'site.domain', 'LOG');
-    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`) values(3, 'OPEN_RTB', 'site.page', 'LOG');
-    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`) values(4, 'OPEN_RTB', 'site.id', 'LOG');
-    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`) values(5, 'OPEN_RTB', 'site.domain', 'CALL_DELPHI');
-    
+    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental` ) values(1, 'OPEN_RTB', 'site.demo', 'CALL_DELPHI', true, false);
+    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental`) values(2, 'OPEN_RTB', 'site.domain', 'LOG', true, false);
+    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental`) values(3, 'OPEN_RTB', 'site.page', 'LOG', true, false);
+    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental`) values(4, 'OPEN_RTB', 'site.id', 'LOG', true, false);
+    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental`) values(5, 'OPEN_RTB', 'site.domain', 'CALL_DELPHI', true, false);
+    select * FROM label\G;
+
+
+
+    How to install and run ui
+    Steps to install
+    Make sure you have Node.js installed.
+    Navigate to the main directory (from terminal) where package.json is located.
+
+    Run npm install or yarn install
+    Run npm run serve or yarn serve to start the local development server and start prototyping.
+

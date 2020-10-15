@@ -125,7 +125,7 @@ export default {
     },
     animationDuration: {
       type: Number,
-      default: 500,
+      default: 700,
       description: 'Modal transition duration'
     }
   },

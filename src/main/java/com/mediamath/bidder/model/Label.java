@@ -14,6 +14,10 @@ public class Label {
 
     private String field;
 
+    private Boolean enabled;
+
+    private Boolean experimental;
+
     @Enumerated(EnumType.STRING)
     private Operation operation;
 
@@ -49,29 +53,49 @@ public class Label {
         this.id = id;
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Boolean getExperimental() {
+        return experimental;
+    }
+
+    public void setExperimental(Boolean experimental) {
+        this.experimental = experimental;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Label)) return false;
         Label label = (Label) o;
-        return Objects.equals(getSource(), label.getSource()) &&
-                Objects.equals(getId(), label.getId()) &&
+        return Objects.equals(getId(), label.getId()) &&
+                getSource() == label.getSource() &&
                 Objects.equals(getField(), label.getField()) &&
-                Objects.equals(getOperation(), label.getOperation());
+                Objects.equals(getEnabled(), label.getEnabled()) &&
+                Objects.equals(getExperimental(), label.getExperimental()) &&
+                getOperation() == label.getOperation();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getSource(), getId(), getField(), getOperation());
+        return Objects.hash(getId(), getSource(), getField(), getEnabled(), getExperimental(), getOperation());
     }
 
     @Override
     public String toString() {
         return "Label{" +
-                "id='" + id + '\'' +
-                "name='" + source + '\'' +
-                ", value='" + field + '\'' +
-                ", operation='" + operation + '\'' +
+                "id=" + id +
+                ", source=" + source +
+                ", field='" + field + '\'' +
+                ", enabled=" + enabled +
+                ", experimental=" + experimental +
+                ", operation=" + operation +
                 '}';
     }
 }

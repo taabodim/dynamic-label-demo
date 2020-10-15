@@ -12,12 +12,13 @@
           :link="{
             name: $t('sidebar.dashboard'),
             icon: 'tim-icons icon-chart-pie-36',
-            path: '/dashboard'
+            /** path: '/dashboard' --> */ 
+            path: '/table-list/paginated'
           }"
         >
         </sidebar-item>
     
-        <sidebar-item
+        <!-- <sidebar-item
           :link="{
             name: $t('sidebar.tables'),
             icon: 'tim-icons icon-puzzle-10'
@@ -41,11 +42,11 @@
               path: '/table-list/paginated'
             }"
           ></sidebar-item>
-        </sidebar-item>
+        </sidebar-item> -->
       </template>
     </side-bar>
     <!--Share plugin (for demo purposes). You can remove it if don't plan on using it-->
-    <sidebar-share :background-color.sync="sidebarBackground"> </sidebar-share>
+    <!-- <sidebar-share :background-color.sync="sidebarBackground"> </sidebar-share> -->
     <div class="main-panel" :data="sidebarBackground">
       <dashboard-navbar></dashboard-navbar>
       <router-view name="header"></router-view>
