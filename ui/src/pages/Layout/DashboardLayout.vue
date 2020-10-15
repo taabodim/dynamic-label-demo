@@ -13,7 +13,7 @@
             name: $t('sidebar.dashboard'),
             icon: 'tim-icons icon-chart-pie-36',
             /** path: '/dashboard' --> */ 
-            path: '/table-list/paginated'
+            path: '/opt-data-pipeline/paginated'
           }"
         >
         </sidebar-item>
@@ -27,19 +27,19 @@
           <sidebar-item
             :link="{
               name: $t('sidebar.regularTables'),
-              path: '/table-list/regular'
+              path: '/opt-data-pipeline/regular'
             }"
           ></sidebar-item>
           <sidebar-item
             :link="{
               name: $t('sidebar.extendedTables'),
-              path: '/table-list/extended'
+              path: '/opt-data-pipeline/extended'
             }"
           ></sidebar-item>
           <sidebar-item
             :link="{
               name: $t('sidebar.paginatedTables'),
-              path: '/table-list/paginated'
+              path: '/opt-data-pipeline/paginated'
             }"
           ></sidebar-item>
         </sidebar-item> -->

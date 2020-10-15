@@ -27,7 +27,7 @@
         <div class="row">
           <div class="col-md-4">
             <strong>Field Name</strong>
-              <input type="text" class="form-control" placeholder="Field Name" v-model="this.modals.currentRow.field">            
+              <input type="text" class="form-control" placeholder="Field Name" v-model="modals.currentRow.field">            
           </div>
           <div class="col-md-4">
               <strong>Enabled</strong>
@@ -42,7 +42,7 @@
         <div class="row">
           <div class="col-md-4">
             <strong>Operation</strong>
-              <input type="text" class="form-control" placeholder="Operation" v-model="this.modals.currentRow.operation">            
+              <input type="text" class="form-control" placeholder="Operation" v-model="modals.currentRow.operation">            
           </div>
           <div class="col-md-4">
               <strong>Experimental</strong>
@@ -58,7 +58,7 @@
         <div class="row">
           <div class="col-md-4">
             <strong>Source</strong>
-              <input type="text" class="form-control" placeholder="Source" v-model="this.modals.currentRow.source">            
+              <input type="text" class="form-control" placeholder="Source" v-model="modals.currentRow.source">            
           </div>
         </div>
       </div>
@@ -66,7 +66,7 @@
         <base-button
           type="info"
           round
-          @click.native="modals.showEditModal = false"
+          @click.native="editLabel"
           >Save!
         </base-button>
       </div>
@@ -85,7 +85,7 @@
         <div class="row">
           <div class="col-md-4">
             <strong>Field Name</strong>
-              <input type="text" class="form-control" placeholder="Field Name" v-model="this.modals.currentRow.field">            
+              <input type="text" class="form-control" placeholder="Field Name" v-model="modals.currentRow.field">            
           </div>
           <div class="col-md-4">
               <strong>Enabled</strong>
@@ -100,7 +100,7 @@
         <div class="row">
           <div class="col-md-4">
             <strong>Operation</strong>
-              <input type="text" class="form-control" placeholder="Operation" v-model="this.modals.currentRow.operation">            
+              <input type="text" class="form-control" placeholder="Operation" v-model="modals.currentRow.operation">            
           </div>
           <div class="col-md-4">
               <strong>Experimental</strong>
@@ -116,7 +116,7 @@
         <div class="row">
           <div class="col-md-4">
             <strong>Source</strong>
-              <input type="text" class="form-control" placeholder="Source" v-model="this.modals.currentRow.source">            
+              <input type="text" class="form-control" placeholder="Source" v-model="modals.currentRow.source">            
           </div>
         </div>
       </div>
@@ -124,7 +124,7 @@
         <base-button
           type="info"
           round
-          @click.native="modals.showAddModal = false"
+          @click.native="addLabel"
           >Add!
         </base-button>
       </div>
@@ -181,7 +181,7 @@
               <el-table-column :min-width="135" align="right" label="Actions">
                 <div slot-scope="props">
                   <base-button
-                    @click.native="handleEdit(props.$index, props.row)"
+                    @click.native="showEditModal(props.$index, props.row)"
                     class="edit btn-link"
                     type="warning"
                     size="sm"
@@ -222,7 +222,7 @@
         </card>
       <div class="d-flex justify-content-end">
           <base-button type="info" round class="float-right" title=""  
-          @click.native="modals.showAddModal = true"
+          @click.native="showAddNewModal"
           >
             Add New Label <i class="tim-icons icon-minimal-right"></i>
           </base-button>
@@ -286,6 +286,7 @@ export default {
         showAddModal: false,
         mini: false,
         currentRow : {
+          id : -1,
           field : "",
           operation : "",
           source : "",
@@ -308,6 +309,11 @@ export default {
           minWidth: 200
         },
         {
+          prop: 'source',
+          label: 'source',
+          minWidth: 100
+        },
+        {
           prop: 'field',
           label: 'Field',
           minWidth: 200
@@ -318,17 +324,12 @@ export default {
           minWidth: 250
         },
         {
-          prop: 'source',
-          label: 'source',
-          minWidth: 100
-        },
-        {
-          prop: 'enabled',
+          prop: 'enabledStr',
           label: 'enabled',
           minWidth: 120
         },
         {
-          prop: 'experimental',
+          prop: 'experimentalStr',
           label: 'experimental',
           minWidth: 120
         }
@@ -339,65 +340,77 @@ export default {
     };
   },
   methods: {
-    editLabel() { 
-        MANGO_HTTP.get("label/update", 
-        {
-          name: self.name,
-          advertiserId: self.advertiser_id,
-          status: 'ACTIVE', //TODO add status to add audience page
-          data: audienceToCreate
+    addLabel() { 
+        let self = this;
+        MANGO_HTTP.post("label/add", {
+          source: self.modals.currentRow.source,
+          field: self.modals.currentRow.field,
+          operation: self.modals.currentRow.operation,
+          enabled: self.modals.currentRow.enabled,
+          experimental: self.modals.currentRow.experimental
         }).then( response => {
-          console.log(response);
-          getLabelList();
+          console.log("add response", response.data);
+          self.getLabelList();
+          self.modals.showAddModal = false
+      });
+    },
+    editLabel() { 
+        let self = this;
+        MANGO_HTTP.post("label/update", {
+          id: self.modals.currentRow.id,
+          source: self.modals.currentRow.source,
+          field: self.modals.currentRow.field,
+          operation: self.modals.currentRow.operation,
+          enabled: self.modals.currentRow.enabled,
+          experimental: self.modals.currentRow.experimental
+        }).then( response => {
+          console.log("update response", response.data);
+          self.getLabelList();
+          self.modals.showEditModal = false
       });
     },
     getLabelList () {
       let self = this;
       MANGO_HTTP.get("label/list").then( response => {
           if( response.data ) {
-            console.log(response.data);
               let list = [];
 
               response.data.forEach(function (el, i) {
+                var enableValue = "False";
+                if (el.enabled === true) {
+                  enableValue = "True"
+                }
+                var experimentalValue = "False";
+                if (el.experimental === true) {
+                  experimentalValue = "True"
+                }
                   list.push({
                       id: el.id,
                       field: el.field,
                       operation: el.operation,
                       source: el.source,
-                      enabled: "true",
-                      experimental: "false"
-
+                      enabled: el.enabled,
+                      enabledStr: enableValue,
+                      experimental: el.experimental,
+                      experimentalStr: experimentalValue
                   });
               });
               self.tableData = list;
           }
       });
     },
-    handleLike(index, row) {
+    showAddNewModal() {
       this.modals.showAddModal = true
-      /**
-      swal.fire({
-        title: `You liked ${row.field}`,
-        buttonsStyling: false,
-        icon: 'success',
-        customClass: {
-          confirmButton: 'btn btn-success btn-fill'
-        }
-      });
-      */
+      this.modals.currentRow.id = undefined
+      this.modals.currentRow.field = ""
+      this.modals.currentRow.operation = ""
+      this.modals.currentRow.source = ""
+      this.modals.currentRow.enabled = false
+      this.modals.currentRow.experimental = false
     },
-    handleEdit(index, row) {
+    showEditModal(index, row) {
       this.modals.showEditModal = true
       this.modals.currentRow = row
-      /**
-      swal.fire({
-        title: `You want to edit ${row.field}`,
-        buttonsStyling: false,
-        customClass: {
-          confirmButton: 'btn btn-info btn-fill'
-        }
-      });
-      */
     },
     handleDisable(index, row) {
       swal.fire({
@@ -413,7 +426,14 @@ export default {
         buttonsStyling: false
       }).then(result => {
         if (result.value) {
-          this.deleteRow(row);
+          /** this.deleteRow(row); */
+
+        let self = this;
+        MANGO_HTTP.post("label/enable", {
+          id: row.id,
+          enabled: false
+        }).then( response => {
+          self.getLabelList();
           swal.fire({
             title: 'Disabled!',
             text: `You disabled ${row.field}`,
@@ -421,6 +441,8 @@ export default {
             confirmButtonClass: 'btn btn-success btn-fill',
             buttonsStyling: false
           });
+        });
+          
         }
       });
     },

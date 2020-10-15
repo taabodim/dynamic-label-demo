@@ -65,11 +65,27 @@ public class BidderController {
 
     @PostMapping("/api/label/add")
     public Iterable<Label> addLabel(@RequestBody AddLabelPayload payload) {
+        Label labelInDb = new Label();
+        labelInDb.setSource(payload.getSource());
+        labelInDb.setField(payload.getField());
+        labelInDb.setOperation(payload.getOperation());
+        labelInDb.setEnabled(payload.isEnabled());
+        labelInDb.setExperimental(payload.isExperimental());
+        labelRepository.save(labelInDb);
         return labelRepository.findAll();
     }
 
     @PostMapping("/api/label/enable")
     public Iterable<Label> enableLabel(@RequestBody EnableLabelPayload payload) {
+        Optional<Label> labelInDbOpt = labelRepository.findById(payload.getId());
+        if (labelInDbOpt.isPresent()) {
+            Label labelInDb = labelInDbOpt.get();
+            labelInDb.setEnabled(payload.isEnabled());
+            labelRepository.save(labelInDb);
+        } else {
+            throw new IllegalArgumentException("label doesn't exist with id " + payload.getId());
+        }
+
         return labelRepository.findAll();
     }
 }

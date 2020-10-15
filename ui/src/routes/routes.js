@@ -141,9 +141,9 @@ let formsMenu = {
 };
 
 let tablesMenu = {
-  path: '/table-list',
+  path: '/opt-data-pipeline',
   component: DashboardLayout,
-  redirect: '/table-list/regular',
+  redirect: '/opt-data-pipeline/regular',
   name: 'Tables',
   children: [
     {
