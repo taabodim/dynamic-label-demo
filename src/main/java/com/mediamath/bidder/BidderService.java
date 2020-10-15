@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.*;
 import com.mediamath.bidder.model.*;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,8 @@ public class BidderService {
     private CopyOnWriteArrayList<Label> labels;
     private HttpClientService delphiClientService;
 
-    public BidderService(LabelRepository labelRepository) {
+    public BidderService(LabelRepository labelRepository,
+                         HttpClientService delphiClientService) {
         this.labelRepository = labelRepository;
         this.delphiClientService = delphiClientService;
         labels = new CopyOnWriteArrayList<>();
@@ -53,14 +55,21 @@ public class BidderService {
     }
 
     private void callDelphi(VideoPayload vp) throws IOException {
-//        String delphiReq = OBJECT_MAPPER.writeValueAsString(getDelphiRequest(vp));
-//        LOGGER.info("sending delphi request : {}", delphiReq);
-//        delphiClientService.sendPostRequestWithJsonBody("/bidPrice", delphiReq, HttpClientService.PathOption.RELATIVE);
+        DelphiRequest delphiRequest = new DelphiRequest(vp);
+        labels.forEach(label -> {
+            if (label.getOperation().equals(Operation.CALL_DELPHI) && label.getSource().equals(Source.OPEN_RTB)) {
+                try {
+                    delphiRequest.getLabelEntries().add(new LabelDelphiEntry(label, getLabelValueFromOpenRtb(label, vp)));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        String delphiReq = OBJECT_MAPPER.writeValueAsString(delphiRequest);
+        LOGGER.info("sending delphi request : {}", delphiReq);
+        String delphiResponse = delphiClientService.sendPostRequestWithJsonBody("/bidPrice", delphiReq, HttpClientService.PathOption.RELATIVE);
+        LOGGER.info("delphi response : {}", delphiResponse);
     }
-
-//    private DelphiRequest getDelphiRequest(VideoPayload vp) {
-//        DelphiRequest delphiRequest = new DelphiRequest(vp);
-//    }
 
     private void log(VideoPayload vp) throws IOException {
         FileUtils.writeStringToFile(new File("/etc/dynamic-label-demo/impression.log"), toRecord(vp), Charset.defaultCharset(), true);
@@ -89,8 +98,26 @@ public class BidderService {
         parser.setCodec(new ObjectMapper());
         TreeNode tree = parser.readValueAsTree();
         String nodeName = "/" + label.getField().replaceAll("\\.", "/");
-        TreeNode node = tree.at(nodeName);
-        String value = node.isMissingNode() ? "" : node.toString();
+        String value = "";
+        if (tree.at(nodeName) instanceof TextNode) {
+            TextNode node = (TextNode) tree.at(nodeName);
+            value = node.textValue();
+        } if (tree.at(nodeName) instanceof NullNode) {
+            value = "";
+        } else if (tree.at(nodeName) instanceof BooleanNode) {
+            BooleanNode node = (BooleanNode) tree.at(nodeName);
+            value = node.textValue();
+        } else if (tree.at(nodeName) instanceof FloatNode) {
+            FloatNode node = (FloatNode) tree.at(nodeName);
+            value = node.textValue();
+        } else if (tree.at(nodeName) instanceof DecimalNode) {
+            DecimalNode node = (DecimalNode) tree.at(nodeName);
+            value = node.textValue();
+        } else if (tree.at(nodeName) instanceof IntNode) {
+            IntNode node = (IntNode) tree.at(nodeName);
+            value = node.textValue();
+        }
+
         LOGGER.info("nodeName : {} , label name : {}, label value : {}", nodeName, label.getField(), value);
         return value;
     }

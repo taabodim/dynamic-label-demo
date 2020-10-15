@@ -46,4 +46,5 @@
     INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`) values(2, 'OPEN_RTB', 'site.domain', 'LOG');
     INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`) values(3, 'OPEN_RTB', 'site.page', 'LOG');
     INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`) values(4, 'OPEN_RTB', 'site.id', 'LOG');
+    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`) values(5, 'OPEN_RTB', 'site.domain', 'CALL_DELPHI');
     
