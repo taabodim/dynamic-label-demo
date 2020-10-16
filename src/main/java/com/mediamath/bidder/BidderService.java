@@ -14,6 +14,8 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 
@@ -118,6 +120,17 @@ public class BidderService {
         } else if (tree.at(nodeName) instanceof IntNode) {
             IntNode node = (IntNode) tree.at(nodeName);
             value = String.valueOf(node.intValue());
+        } else if (tree.at(nodeName) instanceof ArrayNode) {
+            ArrayNode node = (ArrayNode) tree.at(nodeName);
+            List<String> values = new ArrayList<>();
+            for (int i = 0; i < node.size(); i++) {
+                if (node.get(i) instanceof TextNode) {
+                    value = node.get(i).asText();
+                    LOGGER.info("nodeName : {} , label name : {}, label value : {}", nodeName, label.getField(), value);
+                    values.add(value);
+                }
+            }
+            return OBJECT_MAPPER.writeValueAsString(values);
         }
 
         LOGGER.info("nodeName : {} , label name : {}, label value : {}", nodeName, label.getField(), value);
