@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 public class AdxExchange {
     private static final Logger LOGGER = LoggerFactory.getLogger(BidderMainConfig.class);
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private final ExecutorService pool;
 
     private ExecutorService executor = Executors.newCachedThreadPool();
     private final String videoSample;
@@ -31,19 +32,19 @@ public class AdxExchange {
     public AdxExchange(HttpClientService httpClientService) throws IOException {
         videoSample = FileUtils.readFileToString(new File("/etc/dynamic-label-demo/sample-request.txt"), Charset.defaultCharset());
         this.httpClientService = httpClientService;
+        pool = Executors.newFixedThreadPool(10);
     }
 
     @PostConstruct
     public void sendVideoRequests() {
+        while (true) {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-        Executors.newCachedThreadPool().submit(() -> {
-            while (true) {
-
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            pool.submit(() -> {
 
 //            LOGGER.info("sending bid request : {}", videoSample);
                 try {
@@ -95,7 +96,7 @@ public class AdxExchange {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        });
+            });
+        }
     }
 }
