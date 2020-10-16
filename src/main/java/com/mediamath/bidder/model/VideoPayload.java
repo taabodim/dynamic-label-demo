@@ -5,11 +5,20 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VideoPayload {
     private String id;
+    private Impression imp;
     private Site site;
     private Device device;
 
     private double bidfloor;
     private boolean secure;
+
+    public Impression getImp() {
+        return imp;
+    }
+
+    public void setImp(Impression imp) {
+        this.imp = imp;
+    }
 
     public VideoPayload() {
 
@@ -58,6 +67,7 @@ public class VideoPayload {
     public String toString() {
         return "VideoPayload{" +
                 "id='" + id + '\'' +
+                ", imp=" + imp +
                 ", site=" + site +
                 ", device=" + device +
                 ", bidfloor=" + bidfloor +

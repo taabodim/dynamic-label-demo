@@ -4,14 +4,16 @@ import com.mediamath.bidder.model.LabelEntry;
 import com.mediamath.bidder.model.VideoPayload;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DelphiRequest {
 
     private double bidfloor;
     private boolean secure;
 
-    private List<LabelEntry> labelEntries = new ArrayList<>();
+    private Map<Integer, LabelEntry> labelEntries = new HashMap<>();
 
     public DelphiRequest() {
         // jackson needs me for deserialization
@@ -38,11 +40,11 @@ public class DelphiRequest {
         this.secure = secure;
     }
 
-    public List<LabelEntry> getLabelEntries() {
+    public Map<Integer, LabelEntry> getLabelEntries() {
         return labelEntries;
     }
 
-    public void setLabelEntries(List<LabelEntry> labelEntries) {
+    public void setLabelEntries(Map<Integer, LabelEntry> labelEntries) {
         this.labelEntries = labelEntries;
     }
 

@@ -15,7 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 
@@ -61,7 +63,7 @@ public class BidderService {
         labels.forEach(label -> {
             if (label.getOperation().equals(Operation.CALL_DELPHI) && label.getSource().equals(Source.OPEN_RTB) && label.getEnabled().equals(Active.TRUE)) {
                 try {
-                    delphiRequest.getLabelEntries().add(new LabelEntry(label, getLabelValueFromOpenRtb(label, vp)));
+                    delphiRequest.getLabelEntries().put(label.getId(), new LabelEntry(label, getLabelValueFromOpenRtb(label, vp)));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -77,21 +79,35 @@ public class BidderService {
     }
 
     private String toRecord(VideoPayload vp) throws JsonProcessingException {
-        return vp.getId() + "\t" + vp.getSite().getId() + "\t" + getlabelColumn(vp) + "\n";
+        return vp.getId() + "\t" + vp.getSite().getId() + "\t" + getLabelColumn(vp) + "\t" + getLabelColumnMap(vp) + "\n";
     }
 
-    private String getlabelColumn(VideoPayload vp) throws JsonProcessingException {
-        LabelLogColumn column = new LabelLogColumn();
+    private String getLabelColumn(VideoPayload vp) throws JsonProcessingException {
+        List<LabelEntry> labelEntries = new ArrayList<>();
         labels.forEach(label -> {
             if (label.getOperation().equals(Operation.LOG) && label.getSource().equals(Source.OPEN_RTB) && label.getEnabled().equals(Active.TRUE)) {
                 try {
-                    column.addEntry(new LabelEntry(label, getLabelValueFromOpenRtb(label, vp)));
+                    labelEntries.add(new LabelEntry(label, getLabelValueFromOpenRtb(label, vp)));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
-        return new ObjectMapper().writeValueAsString(column);
+        return new ObjectMapper().writeValueAsString(labelEntries);
+    }
+
+    private String getLabelColumnMap(VideoPayload vp) throws JsonProcessingException {
+        Map<Integer, LabelEntry> labelEntryMap = new HashMap<>();
+        labels.forEach(label -> {
+            if (label.getOperation().equals(Operation.LOG) && label.getSource().equals(Source.OPEN_RTB) && label.getEnabled().equals(Active.TRUE)) {
+                try {
+                    labelEntryMap.put(label.getId(), new LabelEntry(label, getLabelValueFromOpenRtb(label, vp)));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        return new ObjectMapper().writeValueAsString(labelEntryMap);
     }
 
     private String getLabelValueFromOpenRtb(Label label, VideoPayload vp) throws IOException {
@@ -99,41 +115,58 @@ public class BidderService {
         parser.setCodec(new ObjectMapper());
         TreeNode tree = parser.readValueAsTree();
         String nodeName = "/" + label.getField().replaceAll("\\.", "/");
-        String value = "";
-        if (tree.at(nodeName) instanceof TextNode) {
-            TextNode node = (TextNode) tree.at(nodeName);
-            value = node.textValue();
-        } if (tree.at(nodeName) instanceof NullNode) {
-            value = "";
-        } else if (tree.at(nodeName) instanceof BooleanNode) {
-            BooleanNode node = (BooleanNode) tree.at(nodeName);
-            value = String.valueOf(node.booleanValue());
-        } else if (tree.at(nodeName) instanceof FloatNode) {
-            FloatNode node = (FloatNode) tree.at(nodeName);
-            value = String.valueOf(node.floatValue());
-        } else if (tree.at(nodeName) instanceof DoubleNode) {
-            DoubleNode node = (DoubleNode) tree.at(nodeName);
-            value = String.valueOf(node.doubleValue());
-        } else if (tree.at(nodeName) instanceof DecimalNode) {
-            DecimalNode node = (DecimalNode) tree.at(nodeName);
-            value = String.valueOf(node.decimalValue());
-        } else if (tree.at(nodeName) instanceof IntNode) {
-            IntNode node = (IntNode) tree.at(nodeName);
-            value = String.valueOf(node.intValue());
-        } else if (tree.at(nodeName) instanceof ArrayNode) {
-            ArrayNode node = (ArrayNode) tree.at(nodeName);
-            List<String> values = new ArrayList<>();
-            for (int i = 0; i < node.size(); i++) {
-                if (node.get(i) instanceof TextNode) {
-                    value = node.get(i).asText();
-                    LOGGER.info("nodeName : {} , label name : {}, label value : {}", nodeName, label.getField(), value);
-                    values.add(value);
-                }
+        if (label.getField().startsWith("imp.")) {
+            TreeNode impNode = tree.at("/imp").get(0);
+            if (impNode != null) {
+                nodeName = label.getField().replaceAll("imp.", "/");
             }
-            return OBJECT_MAPPER.writeValueAsString(values);
         }
+        TreeNode foundNode = tree.at(nodeName);
+        String value = getValueFromSimpleNode(foundNode, nodeName, label.getField());
+        if (value == null) {
+            if (foundNode instanceof ArrayNode) {
+                ArrayNode node = (ArrayNode) foundNode;
+                List<String> values = new ArrayList<>();
+                for (int i = 0; i < node.size(); i++) {
+                    String valueChild = getValueFromSimpleNode(node.get(i), nodeName, label.getField());
+                    if (valueChild != null) {
+                        values.add(valueChild);
+                    }
+                }
+                value = OBJECT_MAPPER.writeValueAsString(values);
+            } else if (foundNode instanceof ObjectNode) {
+                ObjectNode node = (ObjectNode) foundNode;
+                String finalNodeName = nodeName;
+                node.elements().forEachRemaining(el -> getValueFromSimpleNode(el, finalNodeName, label.getField()));
+            }
+        }
+        return value;
+    }
 
-        LOGGER.info("nodeName : {} , label name : {}, label value : {}", nodeName, label.getField(), value);
+    private String getValueFromSimpleNode(TreeNode foundNode, String nodeName, String fieldName) {
+        String value = null;
+        if (foundNode instanceof TextNode) {
+            TextNode node = (TextNode) foundNode;
+            value = node.textValue();
+        } if (foundNode instanceof NullNode) {
+            value = "";
+        } else if (foundNode instanceof BooleanNode) {
+            BooleanNode node = (BooleanNode) foundNode;
+            value = String.valueOf(node.booleanValue());
+        } else if (foundNode instanceof FloatNode) {
+            FloatNode node = (FloatNode) foundNode;
+            value = String.valueOf(node.floatValue());
+        } else if (foundNode instanceof DoubleNode) {
+            DoubleNode node = (DoubleNode) foundNode;
+            value = String.valueOf(node.doubleValue());
+        } else if (foundNode instanceof DecimalNode) {
+            DecimalNode node = (DecimalNode) foundNode;
+            value = String.valueOf(node.decimalValue());
+        } else if (foundNode instanceof IntNode) {
+            IntNode node = (IntNode) foundNode;
+            value = String.valueOf(node.intValue());
+        }
+        LOGGER.info("nodeName : {} , label name : {}, label value : {}", nodeName, fieldName, value);
         return value;
     }
 }

@@ -3,9 +3,7 @@ package com.mediamath.adx;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.mediamath.bidder.HttpClientService;
-import com.mediamath.bidder.model.Device;
-import com.mediamath.bidder.model.Site;
-import com.mediamath.bidder.model.VideoPayload;
+import com.mediamath.bidder.model.*;
 import com.mediamath.bidder.BidderMainConfig;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -56,9 +54,22 @@ public class AdxExchange {
                     );
                     Random random = new Random();
                     VideoPayload vp = new VideoPayload();
+                    vp.setImp(new Impression());
                     vp.setSite(new Site());
                     vp.setDevice(new Device());
                     vp.setId(RandomStringUtils.randomAlphabetic(16));
+                    vp.getImp().setId(RandomStringUtils.randomAlphabetic(4) + "-" + RandomStringUtils.randomAlphabetic(8) + "-" + RandomStringUtils.randomAlphabetic(4));
+                    vp.getImp().setId(vp.getImp().getId().toUpperCase());
+                    vp.getImp().setVideo(new Video());
+
+                    vp.getImp().getVideo().getProtocols().add(2);
+                    vp.getImp().getVideo().getProtocols().add(4);
+                    vp.getImp().getVideo().getProtocols().add(5);
+                    vp.getImp().getVideo().setMaxduration(random.nextInt(100));
+                    vp.getImp().getVideo().setMinduration(random.nextInt(vp.getImp().getVideo().getMaxduration()));
+                    vp.getImp().getVideo().getMimes().add("video/mpg4");
+                    vp.getImp().getVideo().getMimes().add("video/mp3");
+
                     vp.getDevice().setId(RandomStringUtils.randomAlphabetic(16));
                     vp.getDevice().setLat(Double.parseDouble(df.format(random.nextDouble() % 150)));
                     vp.getDevice().setLon(Double.parseDouble(df.format(random.nextDouble() % 150)));
