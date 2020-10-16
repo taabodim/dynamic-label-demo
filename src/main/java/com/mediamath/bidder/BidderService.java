@@ -79,7 +79,7 @@ public class BidderService {
     }
 
     private String toRecord(VideoPayload vp) throws JsonProcessingException {
-        return vp.getId() + "\t" + vp.getSite().getId() + "\t" + getLabelColumn(vp) + "\t" + getLabelColumnMap(vp) + "\n";
+        return vp.getId() + "\t" + vp.getSite().getId() + "\t" + getLabelColumnMap(vp) + "\n";
     }
 
     private String getLabelColumn(VideoPayload vp) throws JsonProcessingException {
@@ -136,8 +136,7 @@ public class BidderService {
                 value = OBJECT_MAPPER.writeValueAsString(values);
             } else if (foundNode instanceof ObjectNode) {
                 ObjectNode node = (ObjectNode) foundNode;
-                String finalNodeName = nodeName;
-                node.elements().forEachRemaining(el -> getValueFromSimpleNode(el, finalNodeName, label.getField()));
+                value = node.toString();
             }
         }
         return value;

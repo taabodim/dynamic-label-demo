@@ -7,7 +7,6 @@ import com.mediamath.bidder.model.*;
 import com.mediamath.bidder.BidderMainConfig;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,12 +70,16 @@ public class AdxExchange {
                     vp.getImp().getVideo().getMimes().add("video/mp3");
 
                     vp.getDevice().setId(RandomStringUtils.randomAlphabetic(16));
-                    vp.getDevice().setLat(Double.parseDouble(df.format(random.nextDouble() % 150)));
-                    vp.getDevice().setLon(Double.parseDouble(df.format(random.nextDouble() % 150)));
-                    vp.getDevice().setCountry(random.nextBoolean() ? "US" : "UK");
-                    vp.getDevice().setZipCode(random.nextInt(1000000));
-                    vp.getDevice().setUtcoffset(random.nextInt(10));
-                    vp.getDevice().setConnectiontype(random.nextInt(5));
+
+                    vp.getDevice().setGeo(new Geo());
+
+                    vp.getDevice().getGeo().setLat(Double.parseDouble(df.format(random.nextDouble() % 150)));
+                    vp.getDevice().getGeo().setLon(Double.parseDouble(df.format(random.nextDouble() % 150)));
+                    vp.getDevice().getGeo().setCountry(random.nextBoolean() ? "US" : "UK");
+                    vp.getDevice().getGeo().setZipCode(random.nextInt(1000000));
+                    vp.getDevice().getGeo().setUtcoffset(random.nextInt(10));
+                    vp.getDevice().getGeo().setConnectiontype(random.nextInt(5));
+
                     vp.setBidfloor(Double.parseDouble(df.format(random.nextDouble() % 20)));
                     vp.setSecure(random.nextBoolean());
                     vp.getSite().setId(String.valueOf(random.nextInt(1000000)));
