@@ -45,7 +45,7 @@
             <el-select
                   class="select-primary"
                   size="large"
-                  placeholder="Single Select"
+                  placeholder="Choose an Operation"
                   v-model="modals.currentRow.operation"
                 >
                   <el-option
@@ -76,7 +76,7 @@
             <el-select
                   class="select-primary"
                   size="large"
-                  placeholder="Single Select"
+                  placeholder="Choose a Source"
                   v-model="modals.currentRow.source"
                 >
                   <el-option
@@ -132,7 +132,7 @@
             <el-select
                   class="select-primary"
                   size="large"
-                  placeholder="Single Select"
+                  placeholder="Choose an Operation"
                   v-model="modals.currentRow.operation"
                 >
                   <el-option
@@ -162,7 +162,7 @@
             <el-select
                   class="select-primary"
                   size="large"
-                  placeholder="Single Select"
+                  placeholder="Choose a Source"
                   v-model="modals.currentRow.source"
                 >
                   <el-option

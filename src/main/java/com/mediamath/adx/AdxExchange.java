@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,6 +50,10 @@ public class AdxExchange {
 
 //            LOGGER.info("sending bid request : {}", videoSample);
                 try {
+                    List<String> domains = ImmutableList.of("readersdigest.us",
+                            "bbc.com", "cnn.com", "fifa.com",
+                            "nba.com", "fashiontv.com", "euronews.com", "hollywoodstar.com"
+                    );
                     Random random = new Random();
                     VideoPayload vp = new VideoPayload();
                     vp.setSite(new Site());
@@ -58,10 +63,13 @@ public class AdxExchange {
                     vp.getDevice().setLat(Double.parseDouble(df.format(random.nextDouble() % 150)));
                     vp.getDevice().setLon(Double.parseDouble(df.format(random.nextDouble() % 150)));
                     vp.getDevice().setCountry(random.nextBoolean() ? "US" : "UK");
+                    vp.getDevice().setZipCode(random.nextInt(1000000));
+                    vp.getDevice().setUtcoffset(random.nextInt(10));
+                    vp.getDevice().setConnectiontype(random.nextInt(5));
                     vp.setBidfloor(Double.parseDouble(df.format(random.nextDouble() % 20)));
                     vp.setSecure(random.nextBoolean());
                     vp.getSite().setId(String.valueOf(random.nextInt(1000000)));
-                    vp.getSite().setDomain(random.nextBoolean() ? "readersdigest.us" : "bbc.com");
+                    vp.getSite().setDomain(domains.get(random.nextInt(domains.size())));
                     vp.getSite().setCat(ImmutableList.of("IAB1, IAB2"));
                     vp.getSite().setPage(vp.getSite().getDomain() + "/womenhealth.asp");
                     String vpJson = OBJECT_MAPPER.writeValueAsString(vp);

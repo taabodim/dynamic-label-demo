@@ -14,11 +14,6 @@ public class DelhpiMainConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(DelhpiMainConfig.class);
 
     @Bean
-    public HttpClientService x() {
-        return new HttpClientService(200, "http://localhost:9220");
-    }
-
-    @Bean
     public DelphiService delphiService() throws IOException {
         return new DelphiService();
     }

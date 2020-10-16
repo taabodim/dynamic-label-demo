@@ -2,15 +2,29 @@ package com.mediamath.bidder.model;
 
 import java.util.Objects;
 
-public class LabelLogEntry {
+public class LabelEntry {
     private Source source;
+    private Integer id;
     private String field;
     private String value;
 
-    public LabelLogEntry(Label label, String value) {
+    public LabelEntry() {
+        //jackson needs me
+    }
+
+    public LabelEntry(Label label, String value) {
+        id = label.getId();
         field = label.getField();
         source = label.getSource();
         this.value = value;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Source getSource() {
@@ -40,22 +54,24 @@ public class LabelLogEntry {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LabelLogEntry)) return false;
-        LabelLogEntry label = (LabelLogEntry) o;
+        if (!(o instanceof LabelEntry)) return false;
+        LabelEntry label = (LabelEntry) o;
         return Objects.equals(getSource(), label.getSource()) &&
                 Objects.equals(getValue(), label.getValue()) &&
+                Objects.equals(getId(), label.getId()) &&
                 Objects.equals(getField(), label.getField());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getSource(), getValue(), getField());
+        return Objects.hash(getSource(), getValue(), getId(), getField());
     }
 
     @Override
     public String toString() {
         return "Label{" +
                 "name='" + source + '\'' +
+                ", id='" + id + '\'' +
                 ", field='" + field + '\'' +
                 ", value='" + value + '\'' +
                 '}';

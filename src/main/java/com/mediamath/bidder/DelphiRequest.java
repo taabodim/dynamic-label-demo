@@ -1,6 +1,6 @@
 package com.mediamath.bidder;
 
-import com.mediamath.bidder.model.LabelDelphiEntry;
+import com.mediamath.bidder.model.LabelEntry;
 import com.mediamath.bidder.model.VideoPayload;
 
 import java.util.ArrayList;
@@ -11,7 +11,11 @@ public class DelphiRequest {
     private double bidfloor;
     private boolean secure;
 
-    private List<LabelDelphiEntry> labelEntries = new ArrayList<>();
+    private List<LabelEntry> labelEntries = new ArrayList<>();
+
+    public DelphiRequest() {
+        // jackson needs me for deserialization
+    }
 
     public DelphiRequest(VideoPayload vp) {
         bidfloor = vp.getBidfloor();
@@ -34,11 +38,11 @@ public class DelphiRequest {
         this.secure = secure;
     }
 
-    public List<LabelDelphiEntry> getLabelEntries() {
+    public List<LabelEntry> getLabelEntries() {
         return labelEntries;
     }
 
-    public void setLabelEntries(List<LabelDelphiEntry> labelEntries) {
+    public void setLabelEntries(List<LabelEntry> labelEntries) {
         this.labelEntries = labelEntries;
     }
 

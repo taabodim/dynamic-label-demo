@@ -21,7 +21,7 @@ import java.util.HashSet;
 //        @PropertySource(value = "classpath:dynamic-label-demo.properties"),
         @PropertySource(value = "file://${PROPERTY_FILE:/etc/dynamic-label-demo/dynamic-label-demo.properties}",
                 ignoreResourceNotFound = true) })
-//@Import({EssentialMangoConfig.class, EssentialConfig.class, MainConfig.class})
+
 @Import({ExchangeMainConfig.class})
 @ComponentScan(basePackages = {
         "com.mediamath.adx"

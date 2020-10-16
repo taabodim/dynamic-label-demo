@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LabelLogColumn {
-    private List<LabelLogEntry> entries = new ArrayList<>();
+    private List<LabelEntry> entries = new ArrayList<>();
 
-    public List<LabelLogEntry> getEntries() {
+    public List<LabelEntry> getEntries() {
         return entries;
     }
 
-    public void setEntries(List<LabelLogEntry> entries) {
+    public void setEntries(List<LabelEntry> entries) {
         this.entries = entries;
     }
 
-    public void addEntry(LabelLogEntry labelLogEntry) {
-        entries.add(labelLogEntry);
+    public void addEntry(LabelEntry labelEntry) {
+        entries.add(labelEntry);
     }
 }

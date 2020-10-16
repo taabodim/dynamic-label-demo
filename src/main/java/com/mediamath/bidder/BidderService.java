@@ -59,7 +59,7 @@ public class BidderService {
         labels.forEach(label -> {
             if (label.getOperation().equals(Operation.CALL_DELPHI) && label.getSource().equals(Source.OPEN_RTB) && label.getEnabled().equals(Active.TRUE)) {
                 try {
-                    delphiRequest.getLabelEntries().add(new LabelDelphiEntry(label, getLabelValueFromOpenRtb(label, vp)));
+                    delphiRequest.getLabelEntries().add(new LabelEntry(label, getLabelValueFromOpenRtb(label, vp)));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -83,7 +83,7 @@ public class BidderService {
         labels.forEach(label -> {
             if (label.getOperation().equals(Operation.LOG) && label.getSource().equals(Source.OPEN_RTB) && label.getEnabled().equals(Active.TRUE)) {
                 try {
-                    column.addEntry(new LabelLogEntry(label, getLabelValueFromOpenRtb(label, vp)));
+                    column.addEntry(new LabelEntry(label, getLabelValueFromOpenRtb(label, vp)));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

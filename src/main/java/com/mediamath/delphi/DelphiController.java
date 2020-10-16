@@ -1,6 +1,7 @@
 package com.mediamath.delphi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mediamath.bidder.DelphiRequest;
 import com.mediamath.bidder.model.LabelRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class DelphiController {
 
         @PostMapping("/bidPrice")
         public void processBid(
-                @RequestBody BidPricePayload payload) throws IOException {
+                @RequestBody DelphiRequest payload) throws IOException {
             LOGGER.info("payload received : {}", payload);
             delphiService.getBidPrice(payload);
         }

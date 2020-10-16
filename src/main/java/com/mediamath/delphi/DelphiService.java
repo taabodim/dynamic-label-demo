@@ -1,7 +1,9 @@
 package com.mediamath.delphi;
 
+import com.mediamath.bidder.DelphiRequest;
+
 public class DelphiService {
 
-    public void getBidPrice(BidPricePayload payload) {
+    public void getBidPrice(DelphiRequest payload) {
     }
 }
