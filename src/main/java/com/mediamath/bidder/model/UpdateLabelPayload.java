@@ -16,6 +16,20 @@ public class UpdateLabelPayload {
 
     private boolean experimental;
 
+    public UpdateLabelPayload() {
+        //jackson needs me for deserialization
+    }
+
+    public UpdateLabelPayload(Label label) {
+        this.setId(label.getId());
+        this.setSource(label.getSource());
+        this.setField(label.getField());
+        this.setOperation(label.getOperation());
+        this.setOperation(label.getOperation());
+        this.setEnabled(label.getEnabled().equals(Active.TRUE));
+        this.setExperimental(label.getExperimental().equals(Active.TRUE));
+    }
+
     public boolean isEnabled() {
         return enabled;
     }

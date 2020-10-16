@@ -25,7 +25,7 @@
       </h5>
       <div class="instruction">
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <strong>Field Name</strong>
               <input type="text" class="form-control" placeholder="Field Name" v-model="modals.currentRow.field">            
           </div>
@@ -39,10 +39,24 @@
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-4">
+        <div class="row margin-top-20x">
+          <div class="col-md-6">
             <strong>Operation</strong>
-              <input type="text" class="form-control" placeholder="Operation" v-model="modals.currentRow.operation">            
+            <el-select
+                  class="select-primary"
+                  size="large"
+                  placeholder="Single Select"
+                  v-model="modals.currentRow.operation"
+                >
+                  <el-option
+                    v-for="option in selects.operations"
+                    class="select-primary"
+                    :value="option.value"
+                    :label="option.label"
+                    :key="option.label"
+                  >
+                  </el-option>
+            </el-select>
           </div>
           <div class="col-md-4">
               <strong>Experimental</strong>
@@ -54,15 +68,30 @@
             </div>
           </div>
 
-        </div>
-        <div class="row">
-          <div class="col-md-4">
-            <strong>Source</strong>
-              <input type="text" class="form-control" placeholder="Source" v-model="modals.currentRow.source">            
+        </div>        
+      
+        <div class="row margin-top-20x">
+          <div class="col-md-6">
+            <strong>Field Source</strong>
+            <el-select
+                  class="select-primary"
+                  size="large"
+                  placeholder="Single Select"
+                  v-model="modals.currentRow.source"
+                >
+                  <el-option
+                    v-for="option in selects.sources"
+                    class="select-primary"
+                    :value="option.value"
+                    :label="option.label"
+                    :key="option.label"
+                  >
+                  </el-option>
+            </el-select>
           </div>
         </div>
       </div>
-      <div slot="footer" class="justify-content-center footer-top-margin">
+      <div slot="footer" class="justify-content-center footer-bottom-margin margin-top-20x">
         <base-button
           type="info"
           round
@@ -83,7 +112,7 @@
       </h5>
       <div class="instruction">
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <strong>Field Name</strong>
               <input type="text" class="form-control" placeholder="Field Name" v-model="modals.currentRow.field">            
           </div>
@@ -97,10 +126,24 @@
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-4">
+        <div class="row margin-top-20x">
+          <div class="col-md-6">
             <strong>Operation</strong>
-              <input type="text" class="form-control" placeholder="Operation" v-model="modals.currentRow.operation">            
+            <el-select
+                  class="select-primary"
+                  size="large"
+                  placeholder="Single Select"
+                  v-model="modals.currentRow.operation"
+                >
+                  <el-option
+                    v-for="option in selects.operations"
+                    class="select-primary"
+                    :value="option.value"
+                    :label="option.label"
+                    :key="option.label"
+                  >
+                  </el-option>
+            </el-select>
           </div>
           <div class="col-md-4">
               <strong>Experimental</strong>
@@ -113,14 +156,28 @@
           </div>
 
         </div>
-        <div class="row">
-          <div class="col-md-4">
-            <strong>Source</strong>
-              <input type="text" class="form-control" placeholder="Source" v-model="modals.currentRow.source">            
-          </div>
+        <div class="row margin-top-20x">
+          <div class="col-md-6">
+            <strong>Field Source</strong>
+            <el-select
+                  class="select-primary"
+                  size="large"
+                  placeholder="Single Select"
+                  v-model="modals.currentRow.source"
+                >
+                  <el-option
+                    v-for="option in selects.sources"
+                    class="select-primary"
+                    :value="option.value"
+                    :label="option.label"
+                    :key="option.label"
+                  >
+                  </el-option>
+            </el-select>
+        </div>
         </div>
       </div>
-      <div slot="footer" class="justify-content-center footer-top-margin">
+      <div slot="footer" class="justify-content-center footer-bottom-margin">
         <base-button
           type="info"
           round
@@ -280,6 +337,17 @@ export default {
   },
   data() {
     return {
+      selects: {
+        simple: '',
+        operations: [
+          { value: 'LOG', label: 'Record in Imp Logs' },
+          { value: 'CALL_DELPHI', label: 'Send To Delphi' }
+        ],
+        sources: [
+          { value: 'OPEN_RTB', label: 'Open Rtb Bid Req' },
+          { value: 'IMP_LOG', label: 'Impression Log' }
+        ]
+      },
       modals: {
         classic: false,
         showEditModal: false,
@@ -301,25 +369,24 @@ export default {
         total: 0
       },
       searchQuery: '',
-      propsToSearch: ['field', 'operation', 'source'],
       tableColumns: [
         {
           prop: 'id',
           label: 'Id',
-          minWidth: 200
+          minWidth: 40
         },
         {
-          prop: 'source',
+          prop: 'sourceStr',
           label: 'source',
           minWidth: 100
         },
         {
           prop: 'field',
-          label: 'Field',
+          label: 'field',
           minWidth: 200
         },
         {
-          prop: 'operation',
+          prop: 'operationStr',
           label: 'operation',
           minWidth: 250
         },
@@ -384,16 +451,33 @@ export default {
                 if (el.experimental === true) {
                   experimentalValue = "True"
                 }
-                  list.push({
-                      id: el.id,
-                      field: el.field,
-                      operation: el.operation,
-                      source: el.source,
-                      enabled: el.enabled,
-                      enabledStr: enableValue,
-                      experimental: el.experimental,
-                      experimentalStr: experimentalValue
-                  });
+
+                var sourceStr = "";
+                if (el.source === 'OPEN_RTB') {
+                  sourceStr = "Open Rtb Bid Req"
+                } else if (el.source === 'IMP_LOG') {
+                  sourceStr = "Impression Log"
+                }
+
+                var operationStr = "";
+                if (el.operation === 'LOG') {
+                  operationStr = "Record in Imp Logs"
+                } else if (el.operation === 'CALL_DELPHI') {
+                  operationStr = "Send To Delphi"
+                }
+
+                list.push({
+                  id: el.id,
+                  field: el.field,
+                  operation: el.operation,
+                  operationStr: operationStr,
+                  source: el.source,
+                  sourceStr: sourceStr,
+                  enabled: el.enabled,
+                  enabledStr: enableValue,
+                  experimental: el.experimental,
+                  experimentalStr: experimentalValue
+                });
               });
               self.tableData = list;
           }
@@ -458,14 +542,11 @@ export default {
   mounted() {
     // Fuse search initialization.
     this.fuseSearch = new Fuse(this.tableData, {
-      keys: ['name', 'email'],
+      keys: ['source', 'field', 'operation'],
       threshold: 0.3
     });
     document.title = 'Lables';
     this.getLabelList();
-  },
-  created() {
-  
   },
   watch: {
     /**
@@ -475,18 +556,28 @@ export default {
      */
     searchQuery(value) {
       let result = this.tableData;
+      console.log("searchQuery : ", this.searchQuery)
       if (value !== '') {
         result = this.fuseSearch.search(this.searchQuery);
       }
+      console.log("searchQuery : result ", result)
       this.searchedData = result;
+
+      /** 
+      let result = this.tableData;
+        console.log("searchQuery : ", this.searchQuery)
+        for (i = 0; i < tr.length; i++) {
+        }
+       */
+       
     }
   }
 };
 </script>
 <style>
 .pagination-select,
-.footer-top-margin {
-   margin-bottom: 12px;
+.footer-bottom-margin {
+   margin-bottom: 30px;
 }
 .search-input {
   width: 200px;
@@ -507,8 +598,11 @@ export default {
    */ 
    align-content: space-between;
 }
+.margin-top-20x {
+  margin-top : 20px;
+}
 .modal-content {
   width: 120%;
-  height: 120%;
+  height: 140%;
 }
 </style>

@@ -41,7 +41,7 @@ public class BidderService {
                 labelRepository.findAll().forEach(i -> labels.add(i));
                 LOGGER.info("labels refreshed size : {}", labels.size());
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -57,7 +57,7 @@ public class BidderService {
     private void callDelphi(VideoPayload vp) throws IOException {
         DelphiRequest delphiRequest = new DelphiRequest(vp);
         labels.forEach(label -> {
-            if (label.getOperation().equals(Operation.CALL_DELPHI) && label.getSource().equals(Source.OPEN_RTB)) {
+            if (label.getOperation().equals(Operation.CALL_DELPHI) && label.getSource().equals(Source.OPEN_RTB) && label.getEnabled().equals(Active.TRUE)) {
                 try {
                     delphiRequest.getLabelEntries().add(new LabelDelphiEntry(label, getLabelValueFromOpenRtb(label, vp)));
                 } catch (IOException e) {
@@ -66,9 +66,8 @@ public class BidderService {
             }
         });
         String delphiReq = OBJECT_MAPPER.writeValueAsString(delphiRequest);
-        LOGGER.info("sending delphi request : {}", delphiReq);
         String delphiResponse = delphiClientService.sendPostRequestWithJsonBody("/bidPrice", delphiReq, HttpClientService.PathOption.RELATIVE);
-        LOGGER.info("delphi response : {}", delphiResponse);
+        FileUtils.writeStringToFile(new File("/etc/dynamic-label-demo/delphi.log"), delphiReq + "\t" + delphiResponse + "\n", Charset.defaultCharset(), true);
     }
 
     private void log(VideoPayload vp) throws IOException {
@@ -82,7 +81,7 @@ public class BidderService {
     private String getlabelColumn(VideoPayload vp) throws JsonProcessingException {
         LabelLogColumn column = new LabelLogColumn();
         labels.forEach(label -> {
-            if (label.getOperation().equals(Operation.LOG) && label.getSource().equals(Source.OPEN_RTB)) {
+            if (label.getOperation().equals(Operation.LOG) && label.getSource().equals(Source.OPEN_RTB) && label.getEnabled().equals(Active.TRUE)) {
                 try {
                     column.addEntry(new LabelLogEntry(label, getLabelValueFromOpenRtb(label, vp)));
                 } catch (IOException e) {
@@ -106,16 +105,19 @@ public class BidderService {
             value = "";
         } else if (tree.at(nodeName) instanceof BooleanNode) {
             BooleanNode node = (BooleanNode) tree.at(nodeName);
-            value = node.textValue();
+            value = String.valueOf(node.booleanValue());
         } else if (tree.at(nodeName) instanceof FloatNode) {
             FloatNode node = (FloatNode) tree.at(nodeName);
-            value = node.textValue();
+            value = String.valueOf(node.floatValue());
+        } else if (tree.at(nodeName) instanceof DoubleNode) {
+            DoubleNode node = (DoubleNode) tree.at(nodeName);
+            value = String.valueOf(node.doubleValue());
         } else if (tree.at(nodeName) instanceof DecimalNode) {
             DecimalNode node = (DecimalNode) tree.at(nodeName);
-            value = node.textValue();
+            value = String.valueOf(node.decimalValue());
         } else if (tree.at(nodeName) instanceof IntNode) {
             IntNode node = (IntNode) tree.at(nodeName);
-            value = node.textValue();
+            value = String.valueOf(node.intValue());
         }
 
         LOGGER.info("nodeName : {} , label name : {}, label value : {}", nodeName, label.getField(), value);

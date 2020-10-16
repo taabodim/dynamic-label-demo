@@ -1,5 +1,7 @@
 package com.mediamath.bidder.model;
 
+import com.fasterxml.jackson.databind.node.BooleanNode;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -14,9 +16,11 @@ public class Label {
 
     private String field;
 
-    private Boolean enabled;
+    @Enumerated(EnumType.STRING)
+    private Active enabled;
 
-    private Boolean experimental;
+    @Enumerated(EnumType.STRING)
+    private Active experimental;
 
     @Enumerated(EnumType.STRING)
     private Operation operation;
@@ -53,19 +57,19 @@ public class Label {
         this.id = id;
     }
 
-    public Boolean getEnabled() {
+    public Active getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(Boolean enabled) {
+    public void setEnabled(Active enabled) {
         this.enabled = enabled;
     }
 
-    public Boolean getExperimental() {
+    public Active getExperimental() {
         return experimental;
     }
 
-    public void setExperimental(Boolean experimental) {
+    public void setExperimental(Active experimental) {
         this.experimental = experimental;
     }
 

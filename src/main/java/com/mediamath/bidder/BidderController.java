@@ -11,7 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.mediamath.adx.AdxExchange.OBJECT_MAPPER;
 
 @RestController
 public class BidderController {
@@ -35,14 +41,15 @@ public class BidderController {
     @PostMapping("/bid")
     public void processBid(
             @RequestBody VideoPayload payload) throws IOException {
-//        VideoPayload vp = objectMapper.readValue(payload, VideoPayload.class);
-        LOGGER.info("payload received : {}", payload);
+        LOGGER.info("payload received : {}", OBJECT_MAPPER.writeValueAsString(payload));
         bidderService.process(payload);
     }
 
     @GetMapping("/api/label/list")
-    public Iterable<Label> listLabels() {
-        return labelRepository.findAll();
+    public Iterable<UpdateLabelPayload> listLabels() {
+        List<UpdateLabelPayload> allLabels = new ArrayList<>();
+        labelRepository.findAll().iterator().forEachRemaining(label -> allLabels.add(new UpdateLabelPayload(label)));
+        return allLabels;
     }
 
     @PostMapping("/api/label/update")
@@ -53,8 +60,8 @@ public class BidderController {
             labelInDb.setSource(payload.getSource());
             labelInDb.setField(payload.getField());
             labelInDb.setOperation(payload.getOperation());
-            labelInDb.setEnabled(payload.isEnabled());
-            labelInDb.setExperimental(payload.isExperimental());
+            labelInDb.setEnabled(payload.isEnabled() ? Active.TRUE : Active.FALSE);
+            labelInDb.setExperimental(payload.isExperimental() ? Active.TRUE : Active.FALSE);
             labelRepository.save(labelInDb);
         } else {
             throw new IllegalArgumentException("label doesn't exist with id " + payload.getId());
@@ -69,8 +76,8 @@ public class BidderController {
         labelInDb.setSource(payload.getSource());
         labelInDb.setField(payload.getField());
         labelInDb.setOperation(payload.getOperation());
-        labelInDb.setEnabled(payload.isEnabled());
-        labelInDb.setExperimental(payload.isExperimental());
+        labelInDb.setEnabled(payload.isEnabled() ? Active.TRUE : Active.FALSE);
+        labelInDb.setExperimental(payload.isExperimental() ? Active.TRUE : Active.FALSE);
         labelRepository.save(labelInDb);
         return labelRepository.findAll();
     }
@@ -80,7 +87,7 @@ public class BidderController {
         Optional<Label> labelInDbOpt = labelRepository.findById(payload.getId());
         if (labelInDbOpt.isPresent()) {
             Label labelInDb = labelInDbOpt.get();
-            labelInDb.setEnabled(payload.isEnabled());
+            labelInDb.setEnabled(payload.isEnabled() ? Active.TRUE : Active.FALSE);
             labelRepository.save(labelInDb);
         } else {
             throw new IllegalArgumentException("label doesn't exist with id " + payload.getId());

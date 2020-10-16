@@ -36,19 +36,19 @@
         `source` varchar(200) NOT NULL,
         `field` varchar(200) NOT NULL,
         `operation` varchar(200) NOT NULL,
-        `enabled` tinyint(1) DEFAULT 0,
-        `experimental` tinyint(1) DEFAULT 0,
+        `enabled` ENUM('FALSE', 'TRUE') NOT NULL DEFAULT 'FALSE',
+        `experimental` ENUM('FALSE', 'TRUE') NOT NULL DEFAULT 'FALSE',
         `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (`id`));
     
     use label;
     DELETE FROM label;
-    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental` ) values(1, 'OPEN_RTB', 'site.demo', 'CALL_DELPHI', true, false);
-    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental`) values(2, 'OPEN_RTB', 'site.domain', 'LOG', true, false);
-    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental`) values(3, 'OPEN_RTB', 'site.page', 'LOG', true, false);
-    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental`) values(4, 'OPEN_RTB', 'site.id', 'LOG', true, false);
-    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental`) values(5, 'OPEN_RTB', 'site.domain', 'CALL_DELPHI', true, false);
+    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental` ) values(1, 'OPEN_RTB', 'site.demo', 'CALL_DELPHI', 'TRUE', 'FALSE');
+    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental`) values(2, 'OPEN_RTB', 'site.domain', 'LOG', true, FALSE);
+    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental`) values(3, 'OPEN_RTB', 'site.page', 'LOG', true, FALSE);
+    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental`) values(4, 'OPEN_RTB', 'site.id', 'LOG', true, FALSE);
+    INSERT INTO `label`.`label`(`id`, `source`, `field`, `operation`, `enabled`, `experimental`) values(5, 'OPEN_RTB', 'site.domain', 'CALL_DELPHI', true, FALSE);
     select * FROM label\G;
 
 
