@@ -27,7 +27,7 @@
         <div class="row">
           <div class="col-md-6">
             <strong>Field Name</strong>
-              <input type="text" class="form-control" placeholder="Field Name" v-model="modals.currentRow.field">            
+              <input type="text" class="form-control" placeholder="Field Name" v-model="modals.currentRow.field" disabled=true>            
           </div>
           <div class="col-md-4">
               <strong>Enabled</strong>
