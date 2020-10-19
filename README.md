@@ -53,6 +53,10 @@
 
 
 
+    How to run the backend ?
+    make sure the properties file is moved to /etc/dynamic-label-demo
+    run the exchangeApp, BidderApp and DelphiApp in Intellij
+    
     How to install and run ui
     Steps to install
     Make sure you have Node.js installed.
@@ -61,3 +65,5 @@
     Run npm install or yarn install
     Run npm run serve or yarn serve to start the local development server and start prototyping.
 
+    the path is here
+    http://localhost:8082/#/opt-data-pipeline/paginated
